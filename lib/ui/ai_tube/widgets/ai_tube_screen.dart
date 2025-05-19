@@ -1,0 +1,17 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class AiTubeScreen extends ConsumerStatefulWidget {
+  static const path = '/ai-tube';
+  const AiTubeScreen({super.key});
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _AiTubeScreenState();
+}
+
+class _AiTubeScreenState extends ConsumerState<AiTubeScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(body: Text('AiTubeScreen'));
+  }
+}
