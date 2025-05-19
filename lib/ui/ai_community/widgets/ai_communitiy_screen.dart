@@ -1,4 +1,5 @@
 import 'package:aikivemobile/ui/ai_community/view_models/community_view_model.dart';
+import 'package:aikivemobile/ui/ai_community/widgets/community_post_item.dart';
 import 'package:aikivemobile/ui/core/widgets/ai_kive_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -150,7 +151,25 @@ class _AiCommunityScreenState extends ConsumerState<AiCommunityScreen> {
                       );
                     }
                     // 게시글 아이템
-                    return state.posts[index - 1];
+                    final postIndex = index - 1;
+                    final post = state.posts[postIndex];
+                    return CommunityPostItem(
+                      key: ValueKey(post.id),
+                      profileImageUrl: post.profileImageUrl,
+                      nickname: post.nickname,
+                      timeAgo: post.timeAgo,
+                      postImageUrl: post.postImageUrl,
+                      badge: post.badge,
+                      title: post.title,
+                      content: post.content,
+                      views: post.views,
+                      comments: post.comments,
+                      likeCount: post.likeCount,
+                      dislikeCount: post.dislikeCount,
+                      isBookmarked: post.isBookmarked,
+                      onTap: () => viewModel.incrementViewCount(postIndex),
+                      onBookmarkTap: () => viewModel.toggleBookmark(postIndex),
+                    );
                   },
                 );
               },

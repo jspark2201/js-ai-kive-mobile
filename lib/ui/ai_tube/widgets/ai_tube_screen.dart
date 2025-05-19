@@ -15,7 +15,7 @@ class _AiTubeScreenState extends ConsumerState<AiTubeScreen> {
   Widget build(BuildContext context) {
     return const Scaffold(
       appBar: AiKiveAppBar(title: 'AI 튜브'),
-      body: Text('AiTubeScreen'),
+      body: Center(child: Text('AiTube 화면')),
     );
   }
 }

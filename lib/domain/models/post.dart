@@ -1,4 +1,5 @@
 class Post {
+  final String id;
   final String profileImageUrl;
   final String nickname;
   final String timeAgo;
@@ -12,6 +13,7 @@ class Post {
   final int dislikeCount;
   final bool isBookmarked;
   Post({
+    required this.id,
     required this.profileImageUrl,
     required this.nickname,
     required this.timeAgo,
@@ -28,6 +30,7 @@ class Post {
 
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
+      id: json['id'],
       profileImageUrl: json['profileImageUrl'],
       nickname: json['nickname'],
       timeAgo: json['timeAgo'],

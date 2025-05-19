@@ -28,6 +28,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
     return Scaffold(
       body: IndexedStack(index: _currentIndex, children: _screens),
       bottomNavigationBar: BottomNavigationBar(
+        fixedColor: Color(0xff47add4),
         currentIndex: _currentIndex,
         type: BottomNavigationBarType.fixed,
         onTap: (index) => setState(() => _currentIndex = index),

@@ -6,6 +6,7 @@ class MockCommunityRepositoryImpl extends CommunityRepository {
   Future<List<Post>> getPosts() async {
     return [
       Post(
+        id: '1',
         profileImageUrl: 'https://randomuser.me/api/portraits/men/1.jpg',
         nickname: '왈왈왈',
         timeAgo: '3시간 전',
@@ -22,6 +23,7 @@ class MockCommunityRepositoryImpl extends CommunityRepository {
         isBookmarked: false,
       ),
       Post(
+        id: '2',
         profileImageUrl: 'https://randomuser.me/api/portraits/women/2.jpg',
         nickname: '코딩하는펭귄',
         timeAgo: '1시간 전',

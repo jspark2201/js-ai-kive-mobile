@@ -12,6 +12,9 @@ class AiToolsScreen extends ConsumerStatefulWidget {
 class _AiToolsScreenState extends ConsumerState<AiToolsScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AiKiveAppBar(title: 'AI 툴'));
+    return Scaffold(
+      appBar: AiKiveAppBar(title: 'AI 툴'),
+      body: Center(child: Text('AI 툴 화면')),
+    );
   }
 }

@@ -11,7 +11,7 @@ class CommunityState {
   final int selectedTab;
   final List<String> sortOptions;
   final String selectedSort;
-  final List<CommunityPostItem> posts;
+  final List<Post> posts;
   final bool isLoading;
   final String? error;
 
@@ -30,7 +30,7 @@ class CommunityState {
     int? selectedTab,
     List<String>? sortOptions,
     String? selectedSort,
-    List<CommunityPostItem>? posts,
+    List<Post>? posts,
     bool? isLoading,
     String? error,
   }) {
@@ -65,28 +65,9 @@ class CommunityViewModel extends _$CommunityViewModel {
     state = state.copyWith(isLoading: true, error: null);
     try {
       final repo = ref.read(communityRepositoryProvider);
-      final List<Post> postModels = await repo.getPosts();
-      final postItems =
-          postModels
-              .map(
-                (post) => CommunityPostItem(
-                  profileImageUrl: post.profileImageUrl,
-                  nickname: post.nickname,
-                  timeAgo: post.timeAgo,
-                  postImageUrl: post.postImageUrl,
-                  badge: post.badge,
-                  title: post.title,
-                  content: post.content,
-                  views: post.views,
-                  comments: post.comments,
-                  likeCount: post.likeCount,
-                  dislikeCount: post.dislikeCount,
-                  isBookmarked: post.isBookmarked,
-                ),
-              )
-              .toList();
+      final List<Post> posts = await repo.getPosts();
       await Future.delayed(Duration(seconds: 3));
-      state = state.copyWith(posts: postItems, isLoading: false, error: null);
+      state = state.copyWith(posts: posts, isLoading: false, error: null);
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
     }
@@ -100,5 +81,49 @@ class CommunityViewModel extends _$CommunityViewModel {
   void selectSort(String sort) {
     state = state.copyWith(selectedSort: sort);
     // 필요시 정렬에 따라 fetchPosts() 호출 가능
+  }
+
+  void incrementViewCount(int index) {
+    final post = state.posts[index];
+    final updated = Post(
+      id: post.id,
+      profileImageUrl: post.profileImageUrl,
+      nickname: post.nickname,
+      timeAgo: post.timeAgo,
+      postImageUrl: post.postImageUrl,
+      badge: post.badge,
+      title: post.title,
+      content: post.content,
+      views: post.views + 1,
+      comments: post.comments,
+      likeCount: post.likeCount,
+      dislikeCount: post.dislikeCount,
+      isBookmarked: post.isBookmarked,
+    );
+    final newPosts = [...state.posts];
+    newPosts[index] = updated;
+    state = state.copyWith(posts: newPosts);
+  }
+
+  void toggleBookmark(int index) {
+    final post = state.posts[index];
+    final updated = Post(
+      id: post.id,
+      profileImageUrl: post.profileImageUrl,
+      nickname: post.nickname,
+      timeAgo: post.timeAgo,
+      postImageUrl: post.postImageUrl,
+      badge: post.badge,
+      title: post.title,
+      content: post.content,
+      views: post.views,
+      comments: post.comments,
+      likeCount: post.likeCount,
+      dislikeCount: post.dislikeCount,
+      isBookmarked: !post.isBookmarked,
+    );
+    final newPosts = [...state.posts];
+    newPosts[index] = updated;
+    state = state.copyWith(posts: newPosts);
   }
 }
