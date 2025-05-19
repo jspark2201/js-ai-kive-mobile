@@ -1,0 +1,17 @@
+flavors:
+  dev:
+    app:
+      name: "Dev App"
+
+    android:
+      applicationId: "com.bagjunseong.aikivemobile.dev"  
+    ios:
+      bundleId: "com.bagjunseong.aikivemobile.dev"
+  prod:
+    app:
+      name: "Prod App"
+  
+    android:
+      applicationId: "com.bagjunseong.aikivemobile"
+    ios:
+      bundleId: "com.bagjunseong.aikivemobile"
