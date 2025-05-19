@@ -1,7 +1,7 @@
+import 'package:aikivemobile/ui/ai_community/view_models/community_view_model.dart';
 import 'package:aikivemobile/ui/core/widgets/ai_kive_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:aikivemobile/ui/ai_community/widgets/community_post_item.dart';
 
 class AiCommunityScreen extends ConsumerStatefulWidget {
   static const path = '/ai-community';
@@ -15,45 +15,119 @@ class AiCommunityScreen extends ConsumerStatefulWidget {
 class _AiCommunityScreenState extends ConsumerState<AiCommunityScreen> {
   @override
   Widget build(BuildContext context) {
-    final samplePosts = [
-      CommunityPostItem(
-        profileImageUrl: 'https://randomuser.me/api/portraits/men/1.jpg',
-        nickname: '왈왈왈',
-        timeAgo: '3시간 전',
-        postImageUrl:
-            'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
-        badge: 'BEST',
-        title: '어제 바다로 놀러갔다가 연예인 만났어요!',
-        content:
-            '두 분이 인스타그램에 올리실 쇼츠 촬영하고 계시더라구요 셀카 찍어달라고 하니 찍어주셨어요 다들 너무 친절하시고 좋았어요',
-        views: 9,
-        comments: 3,
-        likeCount: 2,
-        dislikeCount: 0,
-        isBookmarked: false,
-      ),
-      CommunityPostItem(
-        profileImageUrl: 'https://randomuser.me/api/portraits/women/2.jpg',
-        nickname: '코딩하는펭귄',
-        timeAgo: '1시간 전',
-        postImageUrl:
-            'https://images.unsplash.com/photo-1465101046530-73398c7f28ca',
-        badge: 'NEW',
-        title: 'AI로 만든 그림 공유해요',
-        content: '최근에 AI로 만든 그림인데, 피드백 부탁드려요!',
-        views: 15,
-        comments: 5,
-        likeCount: 5,
-        dislikeCount: 1,
-        isBookmarked: true,
-      ),
-    ];
+    final state = ref.watch(communityViewModelProvider);
+
     return Scaffold(
       appBar: AiKiveAppBar(title: '커뮤니티'),
-      body: ListView.builder(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        itemCount: samplePosts.length,
-        itemBuilder: (context, index) => samplePosts[index],
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(
+              top: 8,
+              left: 8,
+              right: 8,
+              bottom: 4,
+            ),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: List.generate(state.tabs.length, (idx) {
+                  final isSelected = state.selectedTab == idx;
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: GestureDetector(
+                      onTap: () {
+                        ref
+                            .read(communityViewModelProvider.notifier)
+                            .selectTab(idx);
+                      },
+                      child: Row(
+                        children: [
+                          Text(
+                            state.tabs[idx],
+                            style: TextStyle(
+                              color: isSelected ? Colors.white : Colors.white38,
+                              fontWeight:
+                                  isSelected
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                              fontSize: 16,
+                            ),
+                          ),
+                          if (state.tabs[idx] == '공지사항')
+                            const Padding(
+                              padding: EdgeInsets.only(left: 2),
+                              child: Icon(
+                                Icons.campaign,
+                                color: Colors.red,
+                                size: 16,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  );
+                }),
+              ),
+            ),
+          ),
+          const Divider(height: 1, color: Color(0xFF232C36)),
+          Expanded(
+            child: ListView.builder(
+              padding: EdgeInsets.zero,
+              itemCount: state.posts.length + 1, // +1 for dropdown
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  // 드롭다운 우측 정렬
+                  return Container(
+                    height: 32,
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    margin: const EdgeInsets.only(top: 8, right: 8, bottom: 8),
+                    alignment: Alignment.centerRight,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF232C36),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: state.selectedSort,
+                          dropdownColor: const Color(0xFF232C36),
+                          icon: const Icon(
+                            Icons.keyboard_arrow_down,
+                            color: Colors.white,
+                          ),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 15,
+                          ),
+                          onChanged: (v) {
+                            ref
+                                .read(communityViewModelProvider.notifier)
+                                .selectSort(v!);
+                          },
+                          items:
+                              state.sortOptions
+                                  .map(
+                                    (e) => DropdownMenuItem(
+                                      value: e,
+                                      child: Text(e),
+                                    ),
+                                  )
+                                  .toList(),
+                        ),
+                      ),
+                    ),
+                  );
+                }
+                // 게시글 아이템
+                return state.posts[index - 1];
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
