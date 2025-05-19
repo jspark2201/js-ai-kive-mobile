@@ -36,7 +36,16 @@ class MyApp extends ConsumerWidget {
       title: 'AI KIVE',
       theme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.orange),
+        colorScheme: ColorScheme.dark(
+          surface: Colors.black,
+          primary: Colors.purple,
+        ),
+        scaffoldBackgroundColor: Colors.black,
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(color: Colors.white),
+          bodyMedium: TextStyle(color: Colors.white),
+          bodySmall: TextStyle(color: Colors.white),
+        ),
       ),
       routerConfig: router,
     );
