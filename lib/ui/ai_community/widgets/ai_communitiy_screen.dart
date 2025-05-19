@@ -49,7 +49,7 @@ class _AiCommunityScreenState extends ConsumerState<AiCommunityScreen> {
       ),
     ];
     return Scaffold(
-      appBar: const AiKiveAppBar(title: '커뮤니티'),
+      appBar: AiKiveAppBar(title: '커뮤니티'),
       body: ListView.builder(
         padding: const EdgeInsets.symmetric(vertical: 12),
         itemCount: samplePosts.length,
