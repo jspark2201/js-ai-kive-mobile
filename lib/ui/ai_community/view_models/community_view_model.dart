@@ -1,6 +1,8 @@
 // lib/ui/ai_community/view_models/community_view_model.dart
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '../../../di/repository_providers.dart';
 import '../widgets/community_post_item.dart';
+import 'package:aikivemobile/domain/models/post.dart';
 
 part 'community_view_model.g.dart';
 
@@ -10,6 +12,8 @@ class CommunityState {
   final List<String> sortOptions;
   final String selectedSort;
   final List<CommunityPostItem> posts;
+  final bool isLoading;
+  final String? error;
 
   CommunityState({
     required this.tabs,
@@ -17,6 +21,8 @@ class CommunityState {
     required this.sortOptions,
     required this.selectedSort,
     required this.posts,
+    this.isLoading = false,
+    this.error,
   });
 
   CommunityState copyWith({
@@ -25,6 +31,8 @@ class CommunityState {
     List<String>? sortOptions,
     String? selectedSort,
     List<CommunityPostItem>? posts,
+    bool? isLoading,
+    String? error,
   }) {
     return CommunityState(
       tabs: tabs ?? this.tabs,
@@ -32,6 +40,8 @@ class CommunityState {
       sortOptions: sortOptions ?? this.sortOptions,
       selectedSort: selectedSort ?? this.selectedSort,
       posts: posts ?? this.posts,
+      isLoading: isLoading ?? this.isLoading,
+      error: error,
     );
   }
 }
@@ -45,47 +55,50 @@ class CommunityViewModel extends _$CommunityViewModel {
       selectedTab: 0,
       sortOptions: ['최신순', '인기순'],
       selectedSort: '최신순',
-      posts: [
-        CommunityPostItem(
-          profileImageUrl: 'https://randomuser.me/api/portraits/men/1.jpg',
-          nickname: '왈왈왈',
-          timeAgo: '3시간 전',
-          postImageUrl:
-              'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
-          badge: 'BEST',
-          title: '어제 바다로 놀러갔다가 연예인 만났어요!',
-          content:
-              '두 분이 인스타그램에 올리실 쇼츠 촬영하고 계시더라구요 셀카 찍어달라고 하니 찍어주셨어요 다들 너무 친절하시고 좋았어요',
-          views: 9,
-          comments: 3,
-          likeCount: 2,
-          dislikeCount: 0,
-          isBookmarked: false,
-        ),
-        CommunityPostItem(
-          profileImageUrl: 'https://randomuser.me/api/portraits/women/2.jpg',
-          nickname: '코딩하는펭귄',
-          timeAgo: '1시간 전',
-          postImageUrl:
-              'https://images.unsplash.com/photo-1465101046530-73398c7f28ca',
-          badge: 'NEW',
-          title: 'AI로 만든 그림 공유해요',
-          content: '최근에 AI로 만든 그림인데, 피드백 부탁드려요!',
-          views: 15,
-          comments: 5,
-          likeCount: 5,
-          dislikeCount: 1,
-          isBookmarked: true,
-        ),
-      ],
+      posts: [],
+      isLoading: false,
+      error: null,
     );
+  }
+
+  Future<void> fetchPosts() async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final repo = ref.read(communityRepositoryProvider);
+      final List<Post> postModels = await repo.getPosts();
+      final postItems =
+          postModels
+              .map(
+                (post) => CommunityPostItem(
+                  profileImageUrl: post.profileImageUrl,
+                  nickname: post.nickname,
+                  timeAgo: post.timeAgo,
+                  postImageUrl: post.postImageUrl,
+                  badge: post.badge,
+                  title: post.title,
+                  content: post.content,
+                  views: post.views,
+                  comments: post.comments,
+                  likeCount: post.likeCount,
+                  dislikeCount: post.dislikeCount,
+                  isBookmarked: post.isBookmarked,
+                ),
+              )
+              .toList();
+      await Future.delayed(Duration(seconds: 3));
+      state = state.copyWith(posts: postItems, isLoading: false, error: null);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+    }
   }
 
   void selectTab(int idx) {
     state = state.copyWith(selectedTab: idx);
+    // 필요시 탭에 따라 fetchPosts() 호출 가능
   }
 
   void selectSort(String sort) {
     state = state.copyWith(selectedSort: sort);
+    // 필요시 정렬에 따라 fetchPosts() 호출 가능
   }
 }

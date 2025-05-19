@@ -14,9 +14,17 @@ class AiCommunityScreen extends ConsumerStatefulWidget {
 
 class _AiCommunityScreenState extends ConsumerState<AiCommunityScreen> {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(communityViewModelProvider.notifier).fetchPosts();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final state = ref.watch(communityViewModelProvider);
-
+    final viewModel = ref.read(communityViewModelProvider.notifier);
     return Scaffold(
       appBar: AiKiveAppBar(title: '커뮤니티'),
       body: Column(
@@ -37,11 +45,7 @@ class _AiCommunityScreenState extends ConsumerState<AiCommunityScreen> {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 4),
                     child: GestureDetector(
-                      onTap: () {
-                        ref
-                            .read(communityViewModelProvider.notifier)
-                            .selectTab(idx);
-                      },
+                      onTap: () => viewModel.selectTab(idx),
                       child: Row(
                         children: [
                           Text(
@@ -74,56 +78,81 @@ class _AiCommunityScreenState extends ConsumerState<AiCommunityScreen> {
           ),
           const Divider(height: 1, color: Color(0xFF232C36)),
           Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.zero,
-              itemCount: state.posts.length + 1, // +1 for dropdown
-              itemBuilder: (context, index) {
-                if (index == 0) {
-                  // 드롭다운 우측 정렬
-                  return Container(
-                    height: 32,
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    margin: const EdgeInsets.only(top: 8, right: 8, bottom: 8),
-                    alignment: Alignment.centerRight,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF232C36),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          value: state.selectedSort,
-                          dropdownColor: const Color(0xFF232C36),
-                          icon: const Icon(
-                            Icons.keyboard_arrow_down,
-                            color: Colors.white,
-                          ),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 15,
-                          ),
-                          onChanged: (v) {
-                            ref
-                                .read(communityViewModelProvider.notifier)
-                                .selectSort(v!);
-                          },
-                          items:
-                              state.sortOptions
-                                  .map(
-                                    (e) => DropdownMenuItem(
-                                      value: e,
-                                      child: Text(e),
-                                    ),
-                                  )
-                                  .toList(),
+            child: Builder(
+              builder: (context) {
+                if (state.isLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (state.error != null) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          '에러 발생: ${state.error}',
+                          style: const TextStyle(color: Colors.red),
                         ),
-                      ),
+                        const SizedBox(height: 12),
+                        ElevatedButton(
+                          onPressed: () => viewModel.fetchPosts(),
+                          child: const Text('다시 시도'),
+                        ),
+                      ],
                     ),
                   );
                 }
-                // 게시글 아이템
-                return state.posts[index - 1];
+                return ListView.builder(
+                  padding: EdgeInsets.zero,
+                  itemCount: state.posts.length + 1, // +1 for dropdown
+                  itemBuilder: (context, index) {
+                    if (index == 0) {
+                      // 드롭다운 우측 정렬
+                      return Container(
+                        height: 32,
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        margin: const EdgeInsets.only(
+                          top: 8,
+                          right: 8,
+                          bottom: 8,
+                        ),
+                        alignment: Alignment.centerRight,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF232C36),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              value: state.selectedSort,
+                              dropdownColor: const Color(0xFF232C36),
+                              icon: const Icon(
+                                Icons.keyboard_arrow_down,
+                                color: Colors.white,
+                              ),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                              ),
+                              onChanged: (v) => viewModel.selectSort(v!),
+                              items:
+                                  state.sortOptions
+                                      .map(
+                                        (e) => DropdownMenuItem(
+                                          value: e,
+                                          child: Text(e),
+                                        ),
+                                      )
+                                      .toList(),
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+                    // 게시글 아이템
+                    return state.posts[index - 1];
+                  },
+                );
               },
             ),
           ),
