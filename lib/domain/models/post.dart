@@ -1,48 +1,25 @@
-class Post {
-  final String id;
-  final String profileImageUrl;
-  final String nickname;
-  final String timeAgo;
-  final String postImageUrl;
-  final String badge;
-  final String title;
-  final String content;
-  final int views;
-  final int comments;
-  final int likeCount;
-  final int dislikeCount;
-  final bool isBookmarked;
-  Post({
-    required this.id,
-    required this.profileImageUrl,
-    required this.nickname,
-    required this.timeAgo,
-    required this.postImageUrl,
-    required this.badge,
-    required this.title,
-    required this.content,
-    required this.views,
-    required this.comments,
-    required this.likeCount,
-    required this.dislikeCount,
-    required this.isBookmarked,
-  });
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  factory Post.fromJson(Map<String, dynamic> json) {
-    return Post(
-      id: json['id'],
-      profileImageUrl: json['profileImageUrl'],
-      nickname: json['nickname'],
-      timeAgo: json['timeAgo'],
-      postImageUrl: json['postImageUrl'],
-      badge: json['badge'],
-      title: json['title'],
-      content: json['content'],
-      views: json['views'],
-      comments: json['comments'],
-      likeCount: json['likeCount'],
-      dislikeCount: json['dislikeCount'],
-      isBookmarked: json['isBookmarked'],
-    );
-  }
+part 'post.g.dart';
+part 'post.freezed.dart';
+
+@freezed
+abstract class Post with _$Post {
+  const factory Post({
+    required String id,
+    required String profileImageUrl,
+    required String nickname,
+    required String timeAgo,
+    required String postImageUrl,
+    required String badge,
+    required String title,
+    required String content,
+    required int views,
+    required int comments,
+    required int likeCount,
+    required int dislikeCount,
+    required bool isBookmarked,
+  }) = _Post;
+
+  factory Post.fromJson(Map<String, dynamic> json) => _$PostFromJson(json);
 }

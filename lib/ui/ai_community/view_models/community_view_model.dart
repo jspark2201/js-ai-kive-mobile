@@ -1,7 +1,6 @@
 // lib/ui/ai_community/view_models/community_view_model.dart
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../di/repository_providers.dart';
-import '../widgets/community_post_item.dart';
 import 'package:aikivemobile/domain/models/post.dart';
 
 part 'community_view_model.g.dart';
@@ -66,7 +65,7 @@ class CommunityViewModel extends _$CommunityViewModel {
     try {
       final repo = ref.read(communityRepositoryProvider);
       final List<Post> posts = await repo.getPosts();
-      await Future.delayed(Duration(seconds: 3));
+      await Future.delayed(Duration(seconds: 1));
       state = state.copyWith(posts: posts, isLoading: false, error: null);
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
