@@ -488,7 +488,7 @@ class _AiVideosSection extends StatelessWidget {
             crossAxisCount: 2,
             mainAxisSpacing: 12,
             crossAxisSpacing: 12,
-            childAspectRatio: 1.2,
+            childAspectRatio: 1.0,
           ),
           itemCount: items.length,
           itemBuilder: (context, idx) {
