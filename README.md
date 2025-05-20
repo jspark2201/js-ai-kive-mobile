@@ -1,6 +1,6 @@
 # aikivemobile
 
-AI KIVE 모바일 어플리케이션.
+AI Kive 모바일 어플리케이션.
 
 ## Getting Started
 
