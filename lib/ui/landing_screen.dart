@@ -2,6 +2,7 @@ import 'package:aikivemobile/ui/ai_community/widgets/ai_communitiy_screen.dart';
 import 'package:aikivemobile/ui/ai_play/widgets/ai_play_screen.dart';
 import 'package:aikivemobile/ui/ai_tools/widgets/ai_tools_screen.dart';
 import 'package:aikivemobile/ui/ai_tube/widgets/ai_tube_screen.dart';
+import 'package:aikivemobile/ui/profile/widgets/my_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -21,6 +22,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
     AiToolsScreen(),
     AiTubeScreen(),
     AiPlayScreen(),
+    MyProfileScreen(),
   ];
 
   @override
@@ -43,6 +45,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
             label: '튜브',
           ),
           BottomNavigationBarItem(icon: Icon(Icons.star), label: '플레이'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: '프로필'),
         ],
       ),
     );
